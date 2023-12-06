@@ -1,10 +1,6 @@
 package com.bigmeco.testdfm
 
-import android.app.Fragment
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -12,10 +8,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.fragment.app.FragmentContainerView
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
@@ -23,7 +15,6 @@ import org.koin.android.ext.android.inject
 import org.koin.core.context.GlobalContext.loadKoinModules
 import org.koin.core.module.Module
 import kotlin.reflect.full.createInstance
-import org.w3c.dom.Text
 
 
 interface DynamicComposableProvider {
@@ -46,6 +37,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Column {
+
                 if (isModuleLoaded.value) {
                     // Показываем содержимое динамического модуля
                     ShowDynamicFeature()
