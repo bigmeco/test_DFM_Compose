@@ -19,13 +19,20 @@ import androidx.fragment.app.FragmentContainerView
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
+import org.koin.android.ext.android.inject
+import org.koin.core.context.GlobalContext.loadKoinModules
+import org.koin.core.module.Module
 import kotlin.reflect.full.createInstance
 import org.w3c.dom.Text
 
 
-interface DynamicFeatureLoader {
+interface DynamicComposableProvider {
     @Composable
-    fun createFragment(): @Composable () -> Unit
+    fun ProvideComposable()
+}
+
+interface DynamicKoinProvider {
+    fun ProvideKoin(): Module
 }
 
 class MainActivity : ComponentActivity() {
@@ -41,7 +48,7 @@ class MainActivity : ComponentActivity() {
             Column {
                 if (isModuleLoaded.value) {
                     // Показываем содержимое динамического модуля
-                    ShowDynamicFeature().invoke()
+                    ShowDynamicFeature()
                 } else {
                     // Кнопка для загрузки динамического модуля
 
@@ -69,14 +76,12 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun ShowDynamicFeature(): @Composable () -> Unit {
-        val dynamicFeatureLoader = remember {
-            val dynamicFeatureLoaderClass =
-                Class.forName("com.bigmeco.dynamicfeature.DynamicFeatureLoaderImpl").kotlin
-            dynamicFeatureLoaderClass.createInstance() as DynamicFeatureLoader
+    private fun ShowDynamicFeature() {
+        val dynamicFeatureLoaderClass =
+            Class.forName("com.bigmeco.dynamicfeature.DynamicKoinProviderImpl").kotlin
+        loadKoinModules((dynamicFeatureLoaderClass.createInstance() as DynamicKoinProvider).ProvideKoin())
 
-        }
-
-        return dynamicFeatureLoader.createFragment()
+        val dynamicComposableProvider: DynamicComposableProvider by inject()
+        dynamicComposableProvider.ProvideComposable()
     }
 }
